@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: demo-k8s-prod-ssl-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    certmanager.k8s.io/cluster-issuer: "letsencrypt-demo-k8s-a"
+    certmanager.k8s.io/acme-challenge-type: http01
+
+spec:
+  rules:
+  - host: k8s-demo.prod.bulva.us
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: demo-k8s-prod-backend
+          servicePort: 3000
+  - host: dapps.lynxwallet.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: demo-k8s-prod-backend
+          servicePort: 3000
+  tls:
+  - hosts:
+    - 'dapps.eoslynx.com'
+    - 'dapps.lynxwallet.io'
+    secretName: demo-k8s-prod-cert

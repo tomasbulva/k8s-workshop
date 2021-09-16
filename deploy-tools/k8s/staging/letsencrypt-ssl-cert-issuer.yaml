@@ -1,0 +1,14 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Issuer
+metadata:
+  name: "letsencrypt-demo-k8s-issuer"
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: tomas@workcoin.net
+    privateKeySecretRef:
+      name: demo-k8s-secret
+    solvers:
+       - http01:
+           ingress:
+             class: nginx

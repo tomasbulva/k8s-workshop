@@ -1,0 +1,46 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: demo-k8s-web
+  labels:
+    app: demo-k8s
+spec:
+  template:
+    metadata:
+      labels:
+        app: demo-k8s
+        tier: web
+    spec:
+      containers:
+      - name: k8s-demo
+        image: gcr.io/project/k8s-demo@sha256:a9...d6
+        ports:
+        - containerPort: 80
+      - name: 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-k8s-backend
+  labels:
+    app: demo-k8s
+spec:
+  type: NodePort
+  selector:
+    app: demo-k8s
+    tier: web
+  ports:
+  - port: 3000
+    targetPort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: microsvc
+  labels:
+    app: microsvc
+    tier: backend
+spec:
+  backend:
+    serviceName: microsvc
+    servicePort: 8080

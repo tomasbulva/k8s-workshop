@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: demo-k8s-ssl-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"    
+    certmanager.k8s.io/cluster-issuer: "letsencrypt-demo-k8s"
+    certmanager.k8s.io/acme-challenge-type: http01
+
+spec:
+  rules:
+  - host: k8s-demo.bulva.us
+    http:
+      paths:
+      - backend:
+          serviceName: demo-k8s-backend
+          servicePort: 3000
+  - host: k8s-demo.bulva.us
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: demo-k8s-backend
+          servicePort: 3000
+  tls:
+  - hosts:
+    - k8s-demo.bulva.us
+    - k8s-demo.bulva.us
+    secretName: demo-k8s-cert

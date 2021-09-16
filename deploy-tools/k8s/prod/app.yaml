@@ -1,0 +1,33 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: demo-k8s-prod-web
+  labels:
+    app: demo-k8s-prod
+spec:
+  template:
+    metadata:
+      labels:
+        app: demo-k8s-prod
+        tier: web
+    spec:
+      containers:
+      - name: k8s-demo
+        image: gcr.io/project/k8s-demo@sha256:a9...d6
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-k8s-prod-backend
+  labels:
+    app: demo-k8s-prod
+spec:
+  type: NodePort
+  selector:
+    app: demo-k8s-prod
+    tier: web
+  ports:
+  - port: 3000
+    targetPort: 80

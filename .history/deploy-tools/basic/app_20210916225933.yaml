@@ -1,0 +1,67 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: k8s-workshop-deployment
+  labels:
+    app: k8s-workshop
+spec:
+  template:
+    metadata:
+      labels:
+        app: demo-k8s
+        tier: web
+    spec:
+      containers:
+      - name: frontend
+        image: eu.gcr.io/flowing-castle-326020/frontend@sha256:dbe7a49c638acda104e3edc04d9f8547b6e9c701e49efde30ba27f630a2c7133
+        ports:
+        - containerPort: 80
+      - name: restServer
+        image: eu.gcr.io/flowing-castle-326020/restserver@sha256:f94e2ac71e9d08bab4ab91bf2f6e37665613eb205030f7108cb19e55c181058f
+        ports:
+          - containerPort: 3000
+      - name: socketServer
+        image: eu.gcr.io/flowing-castle-326020/sockerserver@sha256:dbc9f6ecd1a8442f046e766a651eb3fd76c6ac87d82ab57c309ab456eb7870d1
+        ports:
+          - containerPort: 3001
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-workshop-service
+  labels:
+    app: k8s-workshop
+spec:
+  type: NodePort
+  selector:
+    app: frontend
+    tier: web
+  ports:
+  - port: 80
+    targetPort: 80
+  - port: 3001
+    targetPort: 3001
+  - port: 3000
+    targetPort: 3000
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: k8s-workshop-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: k8s-workshop-service
+            port:
+              number: 80

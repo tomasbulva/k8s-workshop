@@ -1,0 +1,25 @@
+### STAGE 1: Build ###
+FROM node:14-alpine as build
+ARG WORKPATH=/usr/src/app
+# set working directory
+RUN mkdir -p $WORKPATH 
+WORKDIR $WORKPATH
+
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH $WORKPATH/node_modules/.bin:$PATH
+
+# install app dependencies
+COPY package*.json $WORKPATH/
+
+RUN npm ci
+
+# add app
+COPY . $WORKPATH
+
+RUN npm run build
+
+### STAGE 2: Production Environment ###
+FROM nginx:1.13.12-alpine
+COPY --from=build /usr/src/app/build /usr/share/nginx/html
+EXPOSE 3002
+CMD ["nginx", "-g", "daemon off;"]

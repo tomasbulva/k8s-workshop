@@ -1,0 +1,199 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-workshop-frontend-deployment
+  labels:
+    app: workshop-frontend
+    role: leader
+    tier: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workshop-frontend
+  template:
+    metadata:
+      labels:
+        app: workshop-frontend
+        role: leader
+        tier: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: eu.gcr.io/flowing-castle-326020/frontend@sha256:dbe7a49c638acda104e3edc04d9f8547b6e9c701e49efde30ba27f630a2c7133
+        resources:
+          requests:
+            cpu: 10m
+            memory: 10Mi
+        ports:
+        - containerPort: 3002
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: workshop-frontend-service
+  labels:
+    app: workshop-frontend-service
+spec:
+  type: NodePort
+  selector:
+    app: workshop-frontend
+    tier: web
+  ports:
+  - port: 80
+    targetPort: 3002
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: workshop-frontend-service-basic
+  labels:
+    app: workshop-frontend-service-basic
+spec:
+  type: NodePort
+  selector:
+    app: workshop-frontend
+    tier: web
+  ports:
+  - port: 8080
+    targetPort: 3002
+
+
+--- 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-workshop-restserver-deployment
+  labels:
+    app: workshop-restserver
+    tier: restserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workshop-restserver
+  template:
+    metadata:
+      labels:
+        app: workshop-restserver
+        tier: restserver
+    spec:
+      containers:
+      - name: restserver
+        image: eu.gcr.io/flowing-castle-326020/restserver@sha256:f94e2ac71e9d08bab4ab91bf2f6e37665613eb205030f7108cb19e55c181058f
+        resources:
+          requests:
+            cpu: 10m
+            memory: 10Mi
+        ports:
+        - containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: workshop-restserver-service
+  labels:
+    app: workshop-restserver-service
+spec:
+  type: NodePort
+  selector:
+    app: workshop-restserver
+    tier: web
+  ports:
+  - port: 3000
+    targetPort: 3000
+
+
+
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-workshop-socketserver-deployment
+  labels:
+    app: workshop-socketserver
+    tier: socketserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workshop-socketserver
+  template:
+    metadata:
+      labels:
+        app: workshop-socketserver
+        tier: socketserver
+    spec:
+      containers:
+      - name: socketserver
+        image: eu.gcr.io/flowing-castle-326020/sockerserver@sha256:dbc9f6ecd1a8442f046e766a651eb3fd76c6ac87d82ab57c309ab456eb7870d1
+        resources:
+          requests:
+            cpu: 10m
+            memory: 10Mi
+        ports:
+        - containerPort: 3001
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: workshop-socketserver-service
+  labels:
+    app: workshop-socketserver-service
+spec:
+  type: NodePort
+  selector:
+    app: workshop-socketserver
+    tier: web
+  ports:
+  - port: 3001
+    targetPort: 3001
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: k8s-workshop-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  defaultBackend:
+    service:
+      name: workshop-frontend-service
+      port:
+        number: 80
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: workshop-frontend-service
+            port:
+              number: 80
+
+--- 
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: basic-ingress
+spec:
+  defaultBackend:
+    service:
+      name: workshop-frontend-service-basic
+      port:
+        number: 8080

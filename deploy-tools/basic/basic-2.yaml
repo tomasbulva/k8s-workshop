@@ -13,25 +13,26 @@ spec:
         run: web
     spec:
       containers:
-      - image: eu.gcr.io/flowing-castle-326020/frontend:3
-        imagePullPolicy: IfNotPresent
-        name: web
-        ports:
-        - containerPort: 8080
-          protocol: TCP
-      - image: eu.gcr.io/flowing-castle-326020/sockerserver:1
+      - image: eu.gcr.io/methodical-path-326311/socket:v1
         imagePullPolicy: IfNotPresent
         name: socketserver
         ports:
         - containerPort: 3001
           protocol: TCP
-      - image: eu.gcr.io/flowing-castle-326020/restserver:1
+
+      - image: eu.gcr.io/methodical-path-326311/rest:v1
         imagePullPolicy: IfNotPresent
         name: restserver
         ports:
         - containerPort: 3000
           protocol: TCP
 
+      - image: eu.gcr.io/methodical-path-326311/frontend:v2
+        imagePullPolicy: IfNotPresent
+        name: web
+        ports:
+        - containerPort: 8080
+          protocol: TCP
 ---
 apiVersion: v1
 kind: Service
@@ -62,8 +63,34 @@ kind: Ingress
 metadata:
   name: basic-ingress
 spec:
-  defaultBackend:
-    service:
-      name: web
-      port:
-        number: 8080
+#  defaultBackend:
+#    service:
+#      name: web
+#      port:
+#        number: 8080
+
+  rules:
+    - host:
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 3000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 3001

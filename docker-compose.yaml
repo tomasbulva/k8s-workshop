@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  socketserver:
+    container_name: socketserver
+    image: socket:v1
+    restart: always
+    ports:
+      - 3001:3001
+
+  restserver:
+    container_name: restserver
+    image: rest:v1
+    restart: always
+    ports:
+      - 3000:3000
+    links:
+      - socketserver:socketserver
+
+  web:
+    container_name: web
+    image: frontend:v4
+    restart: always
+    ports:
+      - 80:8080
+    links:
+      - socketserver:socketserver
+      - restserver:restserver

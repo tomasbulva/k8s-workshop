@@ -4,7 +4,7 @@ import useApi from "./useApi";
 import './App.css';
 
 function App() {
-  const socket = useSocket("http://localhost:3001");
+  const socket = useSocket(`${document.location.origin}:3001`);
   const sendToApi = useApi();
   const [responses, setResponses] = useState([]);
   const inputRef = useRef();

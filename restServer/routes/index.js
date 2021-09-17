@@ -1,8 +1,12 @@
 var express = require('express');
 var router = express.Router();
 const io = require("socket.io-client");
-const socket = io("http://:3001");
-socket.connect();
+const socket = io("http://socketserver:3001", { transports: ['websocket'] });
+
+socket.on("connect_error", console.error);
+socket.on("connect", () => {
+  console.log('connect', socket.id);
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

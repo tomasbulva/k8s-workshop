@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 var server = require("http").Server(app);
-var io = require("socket.io")(server);
+var io = require("socket.io")(server, {cors: {origin: "*"}});
 
 io.on("connection", (socket) => {
   console.log("a client connected", socket.id);

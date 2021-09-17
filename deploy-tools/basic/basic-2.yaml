@@ -13,7 +13,7 @@ spec:
         run: web
     spec:
       containers:
-      - image: eu.gcr.io/flowing-castle-326020/frontend:2
+      - image: eu.gcr.io/flowing-castle-326020/frontend:3
         imagePullPolicy: IfNotPresent
         name: web
         ports:

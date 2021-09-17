@@ -188,3 +188,6 @@ docker container gcr tag
       - `kubectl logs $(kubectl get pod --selector="POD_SELECTOR" --output jsonpath='{.items[0].metadata.name}') -c CONTAINER_NAME`
     - port forwarding
       - `kubectl port-forward $(kubectl get pod --selector="POD_SELECTOR" --output jsonpath='{.items[0].metadata.name}') 8080:3000`
+
+# cleaning up
+  - `kubectl detele -f path/to/yaml`

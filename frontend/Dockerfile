@@ -1,15 +1,18 @@
 # build environment
-FROM node:14-alpine as react-build
-WORKDIR /app
-COPY . ./
-RUN yarn
-RUN yarn build
+#FROM node:14-alpine as react-build
+#WORKDIR /app
+#COPY . ./
+#RUN npm config set strict-ssl false
+#RUN npm i
+#RUN npm run build
 
 # server environment
 FROM nginx:alpine
 COPY nginx.conf /etc/nginx/conf.d/configfile.template
 
-COPY --from=react-build /app/build /usr/share/nginx/html
+#COPY --from=react-build /app/build /usr/share/nginx/html
+
+COPY ./build /usr/share/nginx/html
 
 ENV PORT 8080
 ENV HOST 0.0.0.0

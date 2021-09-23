@@ -1,7 +1,12 @@
 var express = require('express');
 var router = express.Router();
 const io = require("socket.io-client");
-const socket = io("http://socketserver:3001", { transports: ['websocket'] });
+const socket = io("http://:3001", {
+  transports: ['websocket'],
+  rejectUnauthorized: false,
+  agent: false,
+  upgrade: false,
+});
 
 socket.on("connect_error", console.error);
 socket.on("connect", () => {
@@ -11,6 +16,10 @@ socket.on("connect", () => {
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.send('hello world')
+});
+
+router.get('/api', function(req, res, next) {
+  res.send('hello api')
 });
 
 router.post('/', function (req, res) {

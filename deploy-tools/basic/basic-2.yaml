@@ -13,21 +13,21 @@ spec:
         run: web
     spec:
       containers:
-      - image: eu.gcr.io/methodical-path-326311/socket:v1
+      - image: eu.gcr.io/methodical-path-326311/socket:s2.1
         imagePullPolicy: IfNotPresent
         name: socketserver
         ports:
         - containerPort: 3001
           protocol: TCP
 
-      - image: eu.gcr.io/methodical-path-326311/rest:v1
+      - image: eu.gcr.io/methodical-path-326311/rest:s2.2
         imagePullPolicy: IfNotPresent
         name: restserver
         ports:
         - containerPort: 3000
           protocol: TCP
 
-      - image: eu.gcr.io/methodical-path-326311/frontend:v2
+      - image: eu.gcr.io/methodical-path-326311/frontend:s2.5.1
         imagePullPolicy: IfNotPresent
         name: web
         ports:
@@ -63,34 +63,8 @@ kind: Ingress
 metadata:
   name: basic-ingress
 spec:
-#  defaultBackend:
-#    service:
-#      name: web
-#      port:
-#        number: 8080
-
-  rules:
-    - host:
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: web
-                port:
-                  number: 8080
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: web
-                port:
-                  number: 3000
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: web
-                port:
-                  number: 3001
+  defaultBackend:
+    service:
+      name: web
+      port:
+        number: 8080

@@ -5,7 +5,12 @@ export default function useSocket(url) {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const socketIo = io(url);
+    const socketIo = io(url, {
+      transports: ['websocket'],
+      rejectUnauthorized: false,
+      agent: false,
+      upgrade: false,
+    });
 
     setSocket(socketIo);
 
